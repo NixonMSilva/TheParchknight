@@ -1,16 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class InputHandler : MonoBehaviour
 {
+    public static InputHandler current;
+
     private PlayerController playerController;
 
     private Vector2 movementInput = Vector2.zero;
 
+    [SerializeField] public KeyCode interactionKey = KeyCode.Space;
+
+    [SerializeField] public KeyCode scrollMenuKey = KeyCode.F;
+
+    public event EventHandler OnInteractionPressed;
+
+    public event EventHandler OnMenuKeyPressed;
+
     private void Awake ()
     {
-        playerController = GetComponent<PlayerController>();
+        current = this;
+
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
     }
 
     private void Update ()
@@ -18,6 +31,18 @@ public class InputHandler : MonoBehaviour
         // Movement input (Left/Right/Up/Down)
         movementInput.x = Input.GetAxisRaw("Horizontal");
         movementInput.y = Input.GetAxisRaw("Vertical");
+
+        // If you can press the key shown in the tooltip
+        if (Input.GetKeyDown(interactionKey))
+        {
+            //Debug.Log("Test 2");
+            OnInteractionPressed?.Invoke(this, EventArgs.Empty);
+        }
+
+        if (Input.GetKeyDown(scrollMenuKey))
+        {
+            OnMenuKeyPressed?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     private void FixedUpdate ()

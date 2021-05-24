@@ -152,7 +152,8 @@ public class InquisitorController : EntityController
     {
         // Casts a ray in the direction of the player to see if there isn't a wall in the way
         RaycastHit2D hit = Physics2D.Raycast(transform.position, player.transform.position - transform.position, distanceToPlayer, solidBlocks);
-        // Debug.DrawRay(transform.position, player.position - transform.position, Color.magenta);
+
+        //Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.magenta);
 
         return (hit.collider != null);
     }
