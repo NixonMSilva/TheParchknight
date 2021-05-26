@@ -18,6 +18,10 @@ public class UIController : MonoBehaviour
 
     private GameObject scrollMenuOpenButton;
 
+    private GameObject captureSliderPanel;
+
+    private Slider captureSlider;
+
     [SerializeField] private List<GameObject> _scrollMenuItems;
 
     private string defaultTooltipText;
@@ -32,11 +36,35 @@ public class UIController : MonoBehaviour
 
         scrollMenuPanel = GameObject.Find("ScrollViewPanel");
 
+        captureSliderPanel = GameObject.Find("CapturePanel");
+        captureSlider = captureSliderPanel.GetComponentInChildren<Slider>();
+
+        if (captureSlider != null)
+        {
+            Debug.Log("Capture");
+        }
+
         defaultTooltipText = tooltipText.text;
 
         HideTooltip();
         HideScrollMenu();
+        HideCaptureBar();
         IntializeCounters();
+    }
+
+    public void UpdateCaptureBar (float value)
+    {
+        captureSlider.value = value;
+    }
+
+    public void ShowCaptureBar ()
+    {
+        captureSliderPanel.SetActive(true);
+    }
+
+    public void HideCaptureBar()
+    {
+        captureSliderPanel.SetActive(false);
     }
 
     private void IntializeCounters ()

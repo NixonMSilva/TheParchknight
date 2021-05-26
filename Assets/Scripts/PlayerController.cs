@@ -10,6 +10,8 @@ public class PlayerController : EntityController
 
     [SerializeField] private Transform currentReset;
 
+    private bool hasPotion = false;
+
     private new void Awake ()
     {
         base.Awake();
@@ -45,4 +47,22 @@ public class PlayerController : EntityController
         UI_controller.FadeInScreen();
     }
 
+    public void UpdateCaptureBar (float value)
+    {
+        UI_controller.UpdateCaptureBar(value);
+    }
+
+    public void EnableCaptureBar ()
+    {
+        UI_controller.ShowCaptureBar();
+    }
+
+    public void DisableCaptureBar ()
+    {
+        UI_controller.HideCaptureBar();
+    }
+
+    public void SetPotion (bool value) => hasPotion = value;
+
+    public bool GetPotion () => hasPotion;
 }

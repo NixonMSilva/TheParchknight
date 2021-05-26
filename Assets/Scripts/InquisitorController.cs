@@ -16,10 +16,6 @@ public class InquisitorController : EntityController
 
     private GameObject player;
     private PlayerStatusController playerStatus;
-    
-    // Colliders
-    private Collider2D inquisitorCollider;
-    private Collider2D playerCollider;
 
     // AI Distance
     [SerializeField] private float followDistance = 1.5f;
@@ -49,10 +45,6 @@ public class InquisitorController : EntityController
         // Get the player object
         player = GameObject.Find("Player");
         playerStatus = player.GetComponent<PlayerStatusController>();
-
-        // Get colliders
-        inquisitorCollider = GetComponent<Collider2D>();
-        playerCollider = player.GetComponent<Collider2D>();
     }
 
     private void Start ()
@@ -121,7 +113,7 @@ public class InquisitorController : EntityController
             currentState = 0;
         } */
 
-        // FSM to decided what to do
+        // FSM to decide what to do
         switch (currentState)
         {
             case 0:
@@ -140,26 +132,6 @@ public class InquisitorController : EntityController
         Debug.Log("Target:" + destinationSetter.target);
         Debug.Log("Target Distance:" + distanceToPlayer); 
         */
-
-        // If the player is not being captured, check if the inquisitor
-        // touches his collider
-        if (!playerStatus.isBeingCaptured)
-        {
-            if (inquisitorCollider.IsTouching(playerCollider))
-            {
-                StartPlayerCapture();
-            }
-        }
-        else
-        {
-            if (!inquisitorCollider.IsTouching(playerCollider))
-            {
-                EndPlayerCapture();
-            }
-            // Else, check if the player has left the contact zone
-        }
-        
-
     }
 
     private void Patrol ()
@@ -189,16 +161,6 @@ public class InquisitorController : EntityController
     {
         // pathfinder.canSearch = true;
         destinationSetter.target = player.transform;
-    }
-
-    private void StartPlayerCapture ()
-    {
-        playerStatus.isBeingCaptured = true;
-    }
-
-    private void EndPlayerCapture ()
-    {
-        playerStatus.isBeingCaptured = false;
     }
 
     private void StopChase ()
