@@ -93,6 +93,16 @@ public class UIController : MonoBehaviour
         scrollMenuOpenButton.SetActive(true);
     }
 
+    public void FadeOutScreen ()
+    {
+
+    }
+
+    public void FadeInScreen ()
+    {
+
+    }
+
     [ContextMenu("Autofill Scrolls")]
     void AutofillCollectibles ()
     {

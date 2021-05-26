@@ -14,9 +14,12 @@ public class EntityController : MonoBehaviour
 
     protected Animator anim;
 
+    protected UIController UI_controller;
+
     protected void Awake ()
     {
         rb = GetComponent<Rigidbody2D>();
+        UI_controller = GameObject.Find("UI").GetComponent<UIController>();
     }
 
     protected void PerformMove (Vector2 movement, bool isNormalized)

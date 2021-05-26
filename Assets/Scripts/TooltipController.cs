@@ -66,4 +66,16 @@ public class TooltipController : MonoBehaviour
     {
         InputHandler.current.OnInteractionPressed -= ButtonPressed;
     }
+
+    public void ChangeText (string text)
+    {
+        UI_Controller.DrawTooltip(text + " " + tooltipKey);
+    }
+
+    public void HideText ()
+    {
+        UI_Controller.HideTooltip();
+    }
+
+    public string GetTooltipBaseText () => tooltipBaseText;
 }
