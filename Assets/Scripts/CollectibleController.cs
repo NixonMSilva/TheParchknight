@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class CollectibleController : MonoBehaviour
 {
+    private AudioManager audioManager;
+
     private UIController UI_Controller;
 
     [SerializeField] private List<CollectiblePickup> _coinList;
@@ -21,6 +23,7 @@ public class CollectibleController : MonoBehaviour
 
     private void Awake ()
     {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         UI_Controller = GameObject.Find("UI").GetComponent<UIController>();
 
         foreach (CollectiblePickup collectible in _coinList)
@@ -49,7 +52,16 @@ public class CollectibleController : MonoBehaviour
 
     private void HandleCoinPickup (CollectiblePickup obj)
     {
-        UI_Controller.UpdateCoinCount(++coinCount);
+        Debug.Log("Teste Aqui Antes");
+        audioManager.PlaySound("CoinPickup");
+        Debug.Log("Teste Aqui Depois");
+        ChangeCoinCount(1);
+    }
+
+    public void ChangeCoinCount (int delta)
+    {
+        UI_Controller.UpdateCoinCount(coinCount + delta);
+        coinCount += delta;
     }
 
     public void DrawScrollMenu ()

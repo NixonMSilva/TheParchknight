@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,13 +15,20 @@ public class PlayerStatusController : MonoBehaviour
     [SerializeField] private float captureTimeout;
     [SerializeField] private float timeoutPercentage = 0f;
 
+    [SerializeField] private float potionTimeoutTime = 2f;
+    [SerializeField] private float potionTimeout;
+    private bool isInvisible;
+
     private PlayerController playerController;
     private Collider2D playerCollider;
 
     private List<Collider2D> contacts;
+    [SerializeField] private int noContacts;
 
-    private ContactFilter2D contactFilter;
+    [SerializeField] private ContactFilter2D contactFilter;
     [SerializeField] private LayerMask enemyMask;
+
+    [SerializeField] private Color invisibleColor;
 
     private void Awake ()
     {
@@ -30,6 +38,7 @@ public class PlayerStatusController : MonoBehaviour
         contacts = new List<Collider2D>();
 
         ResetCaptureTimer();
+        ResetInvisibilityTimer();
     }
 
     private void Update ()
@@ -55,7 +64,9 @@ public class PlayerStatusController : MonoBehaviour
             isBeingCaptured = false;
         } */
 
-        if (playerCollider.IsTouchingLayers(enemyMask))
+        // Player capture
+
+        if (playerCollider.IsTouchingLayers(enemyMask) && !isHidden)
         {
             isBeingCaptured = true;
         }
@@ -64,7 +75,6 @@ public class PlayerStatusController : MonoBehaviour
             isBeingCaptured = false;
         }
 
-        Debug.Log("Teste3: " + isBeingCaptured);
         if (isBeingCaptured)
         {
             if (!isCaptureBarActive)
@@ -82,8 +92,9 @@ public class PlayerStatusController : MonoBehaviour
                 // Player gets captured
                 playerController.ResetPlayerPositionOnMap();
             }
-            // Decreases the counter
-            captureTimeout -= Time.deltaTime;
+
+            noContacts = playerCollider.OverlapCollider(contactFilter, contacts);
+            captureTimeout -= Time.deltaTime * noContacts;
 
             // Sets the capture bar base on the percentage values
             timeoutPercentage = (captureTimeoutTime - captureTimeout) / (captureTimeoutTime);
@@ -102,10 +113,38 @@ public class PlayerStatusController : MonoBehaviour
                 ResetCaptureTimer();
             }
         }
+
+        // Invisibility timeout
+        if (isInvisible)
+        {
+            if (potionTimeout <= 0)
+            {
+                ResetInvisibilityTimer();
+                SetPlayerSpriteColor(new Color(1f, 1f, 1f, 1f));
+                isInvisible = isHidden = false;
+            }
+            potionTimeout -= Time.deltaTime;
+        }
     }
 
     private void ResetCaptureTimer ()
     {
         captureTimeout = captureTimeoutTime;
+    }
+
+    private void ResetInvisibilityTimer ()
+    {
+        potionTimeout = potionTimeoutTime;
+    }
+
+    public void UsePotion ()
+    {
+        isInvisible = isHidden = true;
+        SetPlayerSpriteColor(invisibleColor);
+    }
+
+    private void SetPlayerSpriteColor (Color color)
+    {
+        GetComponent<SpriteRenderer>().color = color;
     }
 }

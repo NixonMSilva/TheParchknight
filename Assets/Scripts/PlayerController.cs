@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,13 +11,18 @@ public class PlayerController : EntityController
 
     [SerializeField] private Transform currentReset;
 
-    private bool hasPotion = false;
+    public bool hasPotion = false;
 
     private new void Awake ()
     {
         base.Awake();
 
         status = GetComponent<PlayerStatusController>();
+    }
+
+    private void Start ()
+    {
+        InputHandler.current.OnPotionKeyPressed += UsePotion;
     }
 
     public void MovePlayer (Vector2 movement)
@@ -36,15 +42,8 @@ public class PlayerController : EntityController
 
     public void ResetPlayerPositionOnMap ()
     {
-        UI_controller.FadeOutScreen();
-
         status.isHidden = true;
-
-        rb.MovePosition(currentReset.position);
-
-        status.isHidden = false;
-
-        UI_controller.FadeInScreen();
+        StartCoroutine(ResetWait(1f));
     }
 
     public void UpdateCaptureBar (float value)
@@ -65,4 +64,31 @@ public class PlayerController : EntityController
     public void SetPotion (bool value) => hasPotion = value;
 
     public bool GetPotion () => hasPotion;
+
+    private void UsePotion (object sender, EventArgs e)
+    {
+        if (hasPotion)
+        {
+            hasPotion = false;
+            status.UsePotion();
+        }
+    }
+
+    private void OnDestroy ()
+    {
+        InputHandler.current.OnPotionKeyPressed -= UsePotion;
+    }
+
+    IEnumerator ResetWait (float duration)
+    {
+        UI_controller.FadeOutScreen(1f);
+        Debug.Log("Teste: A!");
+        yield return new WaitForSeconds(duration);
+        Debug.Log("Teste: B!");
+        transform.position = currentReset.position;
+        yield return new WaitForSeconds(duration);
+        Debug.Log("Teste: C!");
+        UI_controller.FadeInScreen(1f);
+        status.isHidden = false;
+    }
 }

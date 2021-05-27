@@ -11,13 +11,13 @@ public class InputHandler : MonoBehaviour
 
     private Vector2 movementInput = Vector2.zero;
 
-    [SerializeField] public KeyCode interactionKey = KeyCode.Space;
+    [SerializeField] public KeyCode interactionKey = KeyCode.F;
 
-    [SerializeField] public KeyCode scrollMenuKey = KeyCode.F;
+    [SerializeField] public KeyCode potionUseKey = KeyCode.G;
 
     public event EventHandler OnInteractionPressed;
 
-    public event EventHandler OnMenuKeyPressed;
+    public event EventHandler OnPotionKeyPressed;
 
     private void Awake ()
     {
@@ -39,9 +39,9 @@ public class InputHandler : MonoBehaviour
             OnInteractionPressed?.Invoke(this, EventArgs.Empty);
         }
 
-        if (Input.GetKeyDown(scrollMenuKey))
+        if (Input.GetKeyDown(potionUseKey))
         {
-            OnMenuKeyPressed?.Invoke(this, EventArgs.Empty);
+            OnPotionKeyPressed?.Invoke(this, EventArgs.Empty);
         }
     }
 

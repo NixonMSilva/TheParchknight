@@ -9,22 +9,28 @@ using TMPro;
 public class UIController : MonoBehaviour
 {
     private TextMeshProUGUI tooltipText;
-
     private TextMeshProUGUI coinCount;
-
     private TextMeshProUGUI scrollCount;
+    
+    private Image potionIcon;
+    private TextMeshProUGUI potionKeyText;
 
     private GameObject scrollMenuPanel;
-
     private GameObject scrollMenuOpenButton;
 
     private GameObject captureSliderPanel;
-
     private Slider captureSlider;
+
+    private Image black;
+
+    private GameObject returnText;
 
     [SerializeField] private List<GameObject> _scrollMenuItems;
 
     private string defaultTooltipText;
+
+    private Color activatedColor = new Color(1f, 1f, 1f, 1f);
+    private Color deactivatedColor = new Color(1f, 1f, 1f, 0.25f);
 
     private void Awake ()
     {
@@ -32,17 +38,21 @@ public class UIController : MonoBehaviour
         coinCount = GameObject.Find("CoinCount").GetComponent<TextMeshProUGUI>();
         scrollCount = GameObject.Find("ScrollCount").GetComponent<TextMeshProUGUI>();
 
-        scrollMenuOpenButton = GameObject.Find("ScrollMenuButton");
+        potionIcon = GameObject.Find("PotionIcon").GetComponent<Image>();
+        potionKeyText = GameObject.Find("PotionKey").GetComponent<TextMeshProUGUI>();
 
+        scrollMenuOpenButton = GameObject.Find("ScrollMenuButton");
         scrollMenuPanel = GameObject.Find("ScrollViewPanel");
 
         captureSliderPanel = GameObject.Find("CapturePanel");
         captureSlider = captureSliderPanel.GetComponentInChildren<Slider>();
 
-        if (captureSlider != null)
-        {
-            Debug.Log("Capture");
-        }
+        returnText = GameObject.Find("ReturnText");
+        returnText.gameObject.SetActive(false);
+
+        black = GameObject.Find("Black").GetComponent<Image>();
+        
+        potionIcon.color = deactivatedColor;
 
         defaultTooltipText = tooltipText.text;
 
@@ -50,6 +60,11 @@ public class UIController : MonoBehaviour
         HideScrollMenu();
         HideCaptureBar();
         IntializeCounters();
+    }
+
+    private void Start ()
+    {
+        potionKeyText.text = InputHandler.current.potionUseKey.ToString();
     }
 
     public void UpdateCaptureBar (float value)
@@ -85,6 +100,11 @@ public class UIController : MonoBehaviour
         tooltipText.gameObject.SetActive(false);
     }
 
+    public void ShowReturnText ()
+    {
+        returnText.gameObject.SetActive(true);
+    }
+
     public void UpdateCoinCount (int value)
     {
         coinCount.text = value.ToString();
@@ -93,6 +113,14 @@ public class UIController : MonoBehaviour
     public void UpdateScrollCount (int value)
     {
         scrollCount.text = value.ToString();
+    }
+
+    public void SetPotionIconStatus (bool value)
+    {
+        if (value)
+            potionIcon.color = activatedColor;
+        else
+            potionIcon.color = deactivatedColor;
     }
 
     public void DrawScrollMenu (List<bool> _scrollsObtained, List<ScrollPickup> _scrolls)
@@ -121,20 +149,44 @@ public class UIController : MonoBehaviour
         scrollMenuOpenButton.SetActive(true);
     }
 
-    public void FadeOutScreen ()
+    public void FadeOutScreen (float time)
     {
-
+        StartCoroutine(CanvasFade(time, 0f, 1f));
     }
 
-    public void FadeInScreen ()
+    public void FadeInScreen (float time)
     {
-
+        StartCoroutine(CanvasFade(time, 1f, 0f));
     }
 
     [ContextMenu("Autofill Scrolls")]
     void AutofillCollectibles ()
     {
         _scrollMenuItems = GameObject.FindGameObjectsWithTag("ScrollImage").ToList();
+    }
+
+    // 0 - Out | 1 - In
+    IEnumerator CanvasFade (float duration, float startAlpha, float endAlpha)
+    {
+        float startTime = Time.time;
+        float endTime = Time.time + duration;
+        float elapsedTime = 0f;
+
+        while (Time.time <= endTime)
+        {
+            elapsedTime = Time.time - startTime; // update the elapsed time
+            var percentage = 1 / (duration / elapsedTime); // calculate how far along the timeline we are
+            if (startAlpha > endAlpha) // if we are fading out/down 
+            {
+                black.color = new Color(black.color.r, black.color.g, black.color.b, startAlpha - percentage);
+            }
+            else // if we are fading in/up
+            {
+                black.color = new Color(black.color.r, black.color.g, black.color.b, startAlpha + percentage);
+            }
+            yield return new WaitForEndOfFrame();
+        }
+        black.color = new Color(black.color.r, black.color.g, black.color.b, endAlpha);
     }
 
 }

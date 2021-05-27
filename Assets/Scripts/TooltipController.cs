@@ -12,12 +12,15 @@ public class TooltipController : MonoBehaviour
 
     [SerializeField] private string tooltipBaseText = "<default tooltip>";
 
-    private string tooltipKey = "";
+    private string tooltipCurrentText = "";
+
+    [SerializeField] private string tooltipKey = "";
 
     private bool canPressButton = false;
 
     private void Awake ()
     {
+        tooltipCurrentText = tooltipBaseText;
         UI_Controller = GameObject.Find("UI").GetComponent<UIController>();
     }
 
@@ -25,12 +28,6 @@ public class TooltipController : MonoBehaviour
     {
         tooltipKey = "[" + InputHandler.current.interactionKey.ToString().ToUpper() + "]";
         InputHandler.current.OnInteractionPressed += ButtonPressed;    
-
-    }
-
-    private void Update ()
-    {
-
     }
 
     private void ButtonPressed (object sender, EventArgs e)
@@ -45,9 +42,9 @@ public class TooltipController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            canPressButton = true;
-            UI_Controller.DrawTooltip(tooltipBaseText + " " + tooltipKey);
             // ShowTooltip
+            canPressButton = true;
+            ShowText();
         }
     }
 
@@ -55,10 +52,9 @@ public class TooltipController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            canPressButton = false;
-            UI_Controller.HideTooltip();
             // Hide tooltip
-
+            canPressButton = false;
+            HideText();
         }
     }
 
@@ -69,7 +65,18 @@ public class TooltipController : MonoBehaviour
 
     public void ChangeText (string text)
     {
-        UI_Controller.DrawTooltip(text + " " + tooltipKey);
+        tooltipCurrentText = text;
+        // ShowText();
+    }
+
+    public void ShowText ()
+    {
+        UI_Controller.DrawTooltip(tooltipCurrentText + " " + tooltipKey);
+    }
+
+    public void ShowTextWihtoutKey ()
+    {
+        UI_Controller.DrawTooltip(tooltipCurrentText);
     }
 
     public void HideText ()
@@ -78,4 +85,6 @@ public class TooltipController : MonoBehaviour
     }
 
     public string GetTooltipBaseText () => tooltipBaseText;
+
+    public string GetTooltipCurrentText () => tooltipCurrentText;
 }
