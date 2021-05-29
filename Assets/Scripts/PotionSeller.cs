@@ -13,6 +13,8 @@ public class PotionSeller : MonoBehaviour
 
     private TooltipController tooltip;
 
+    private AudioManager audioManager;
+
     private string baseTooltipText;
 
     [SerializeField] private float buyCooldown = 2f;
@@ -23,7 +25,7 @@ public class PotionSeller : MonoBehaviour
     private float temporaryCountdown;
     private bool isTemporary = false;
 
-    public event Action<PotionSeller, int> OnPotionPurchase;
+    // public event Action<PotionSeller, int> OnPotionPurchase;
 
     private void Awake ()
     {
@@ -32,6 +34,8 @@ public class PotionSeller : MonoBehaviour
         UIcontroller = GameObject.Find("UI").GetComponent<UIController>();
 
         tooltip = GetComponent<TooltipController>();
+
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     private void Start ()
@@ -57,9 +61,9 @@ public class PotionSeller : MonoBehaviour
     {
         if (player.hasPotion)
         {
-            Debug.Log("Teste Has Potion");
-            ChangeTextTemporarily(buyAlreadyOwnText);
             // The player already has a potion
+            ChangeTextTemporarily(buyAlreadyOwnText);
+            audioManager.PlaySound("PotionError");
         }
         else
         {
@@ -67,6 +71,8 @@ public class PotionSeller : MonoBehaviour
             {
                 // If the player can buy the potion
                 player.hasPotion = true;
+
+                audioManager.PlaySound("PotionBuy");
 
                 UIcontroller.SetPotionIconStatus(true);
 
@@ -78,6 +84,7 @@ public class PotionSeller : MonoBehaviour
             {
                 // If the player doesn't have enough coins
                 ChangeTextTemporarily(buyFailureText);
+                audioManager.PlaySound("PotionError");
             }
         }
     }

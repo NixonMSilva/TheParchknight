@@ -19,6 +19,15 @@ public class Hideout : MonoBehaviour
 
     [SerializeField] private string leaveHideoutText = "Leave";
 
+    enum HideoutType
+    {
+        Wardrobe,
+        Bush,
+        Sewer
+    };
+
+    [SerializeField] private HideoutType type;
+
     private void Awake ()
     {
         audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
@@ -34,7 +43,7 @@ public class Hideout : MonoBehaviour
 
     public void OnHideoutInteraction ()
     {
-        audioManager.PlaySound("Hiding");
+        audioManager.PlaySound(type.ToString());
         if (!playerStatus.isHidden)
         {
             playerStatus.isHidden = true;
@@ -45,11 +54,13 @@ public class Hideout : MonoBehaviour
             animator.SetBool("isBeingUsed", true);
 
             player.GetComponent<SpriteRenderer>().enabled = false;
-            player.GetComponent<Rigidbody2D>().Sleep();
+            player.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
 
             hideoutCollider.enabled = false;
 
             player.transform.position = transform.position;
+
+            StartCoroutine(HideoutAutoCorrector(0.05f));
 
             tooltip.ChangeText(leaveHideoutText);
             tooltip.ShowText();
@@ -63,7 +74,7 @@ public class Hideout : MonoBehaviour
             animator.SetBool("isBeingUsed", false);
 
             player.GetComponent<SpriteRenderer>().enabled = true;
-            player.GetComponent<Rigidbody2D>().WakeUp();
+            player.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
 
             hideoutCollider.enabled = true;
 
@@ -73,5 +84,11 @@ public class Hideout : MonoBehaviour
             tooltip.ChangeText(tooltip.GetTooltipBaseText());
         }
 
+    }
+
+    IEnumerator HideoutAutoCorrector (float correctionTime)
+    {
+        yield return new WaitForSeconds(correctionTime);
+        player.transform.position = transform.position;
     }
 }

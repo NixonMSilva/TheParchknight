@@ -11,11 +11,14 @@ public class InquisitorController : EntityController
 
     private bool canChasePlayer = true;
     private bool isChasingPlayer = false;
+    private bool canThrowAlert = true;
 
     private float distanceToPlayer;
 
     private GameObject player;
     private PlayerStatusController playerStatus;
+
+    [SerializeField] private float maxSpeed = 6f;
 
     // AI Distance
     [SerializeField] private float followDistance = 1.5f;
@@ -26,9 +29,15 @@ public class InquisitorController : EntityController
     private AIPath pathfinder;
     private PatrolController patrol;
 
+    // Movement Control for the Animator
+    private float currX, earlyX;
+    private float currY, earlyY;
+
     private Transform currentNode;
 
     [SerializeField] LayerMask solidBlocks;
+
+    private AudioManager audioManager;
 
     private new void Awake ()
     {
@@ -45,14 +54,22 @@ public class InquisitorController : EntityController
         // Get the player object
         player = GameObject.Find("Player");
         playerStatus = player.GetComponent<PlayerStatusController>();
+
+        // Get the audio manager
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     private void Start ()
     {
         destinationSetter.target = currentNode;
+
+        pathfinder.maxSpeed = speed;
+
+        earlyX = transform.position.x;
+        earlyY = transform.position.y;
     }
 
-    private void Update ()
+    private new void Update ()
     {
         // Verifies distance to player and sets the appropriate state
         distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
@@ -134,6 +151,33 @@ public class InquisitorController : EntityController
         */
     }
 
+    private void FixedUpdate ()
+    {
+        // Animator processer
+
+        currX = transform.position.x;
+        currY = transform.position.y;
+
+        Vector2 speed = new Vector2((currX - earlyX), (currY - earlyY));
+
+        anim.SetFloat("speed_x", speed.x);
+        anim.SetFloat("speed_y", speed.y);
+        anim.SetFloat("speed", speed.sqrMagnitude);
+
+        facingDir = GetDirection(speed);
+
+        ProcessAnimatorDirection(facingDir);
+
+        earlyX = currX;
+        earlyY = currY;
+
+        /*
+        Debug.Log("Teste: X = " + speed.x + " | Y = " + speed.y);
+        Debug.Log("Teste Dir: " + facingDir); 
+        */
+
+    }
+
     private void Patrol ()
     {
         //pathfinder.canSearch = true;
@@ -160,12 +204,20 @@ public class InquisitorController : EntityController
     private void ChasePlayer ()
     {
         // pathfinder.canSearch = true;
+        if (canThrowAlert)
+        {
+            audioManager.PlaySound("InquisitorAlert");
+            canThrowAlert = false;
+        }
         destinationSetter.target = player.transform;
+        pathfinder.maxSpeed = maxSpeed;
     }
 
     private void StopChase ()
     {
         //pathfinder.canSearch = false;
+        canThrowAlert = true;
         destinationSetter.target = currentNode;
+        pathfinder.maxSpeed = speed;
     }
 }

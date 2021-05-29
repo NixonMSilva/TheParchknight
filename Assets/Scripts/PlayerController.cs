@@ -13,11 +13,15 @@ public class PlayerController : EntityController
 
     public bool hasPotion = false;
 
+    private AudioManager audioManager;
+
+
     private new void Awake ()
     {
         base.Awake();
 
         status = GetComponent<PlayerStatusController>();
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
     }
 
     private void Start ()
@@ -70,7 +74,9 @@ public class PlayerController : EntityController
         if (hasPotion)
         {
             hasPotion = false;
+            audioManager.PlaySound("PotionDrink");
             status.UsePotion();
+
         }
     }
 
@@ -81,14 +87,16 @@ public class PlayerController : EntityController
 
     IEnumerator ResetWait (float duration)
     {
+        audioManager.PlaySound("PlayerCaptured");
         UI_controller.FadeOutScreen(1f);
-        Debug.Log("Teste: A!");
+        //Debug.Log("Teste: A!");
         yield return new WaitForSeconds(duration);
-        Debug.Log("Teste: B!");
+        //Debug.Log("Teste: B!");
         transform.position = currentReset.position;
         yield return new WaitForSeconds(duration);
-        Debug.Log("Teste: C!");
+        //Debug.Log("Teste: C!");
         UI_controller.FadeInScreen(1f);
         status.isHidden = false;
     }
+
 }

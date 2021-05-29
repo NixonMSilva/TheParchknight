@@ -30,12 +30,19 @@ public class PlayerStatusController : MonoBehaviour
 
     [SerializeField] private Color invisibleColor;
 
+    private UIController UIcontroller;
+
+    private AudioManager audioManager;
+
     private void Awake ()
     {
         playerController = GetComponent<PlayerController>();
         playerCollider = GetComponent<Collider2D>();
 
         contacts = new List<Collider2D>();
+
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+        UIcontroller = GameObject.Find("UI").GetComponent<UIController>();
 
         ResetCaptureTimer();
         ResetInvisibilityTimer();
@@ -119,9 +126,10 @@ public class PlayerStatusController : MonoBehaviour
         {
             if (potionTimeout <= 0)
             {
-                ResetInvisibilityTimer();
                 SetPlayerSpriteColor(new Color(1f, 1f, 1f, 1f));
                 isInvisible = isHidden = false;
+                audioManager.PlaySound("PotionOver");
+                ResetInvisibilityTimer();
             }
             potionTimeout -= Time.deltaTime;
         }
@@ -140,6 +148,7 @@ public class PlayerStatusController : MonoBehaviour
     public void UsePotion ()
     {
         isInvisible = isHidden = true;
+        UIcontroller.SetPotionIconStatus(false);
         SetPlayerSpriteColor(invisibleColor);
     }
 

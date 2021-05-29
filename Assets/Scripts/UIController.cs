@@ -25,6 +25,8 @@ public class UIController : MonoBehaviour
 
     private GameObject returnText;
 
+    private AudioManager audioManager;
+
     [SerializeField] private List<GameObject> _scrollMenuItems;
 
     private string defaultTooltipText;
@@ -34,6 +36,8 @@ public class UIController : MonoBehaviour
 
     private void Awake ()
     {
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
+
         tooltipText = GameObject.Find("TooltipText").GetComponent<TextMeshProUGUI>();
         coinCount = GameObject.Find("CoinCount").GetComponent<TextMeshProUGUI>();
         scrollCount = GameObject.Find("ScrollCount").GetComponent<TextMeshProUGUI>();
@@ -56,15 +60,17 @@ public class UIController : MonoBehaviour
 
         defaultTooltipText = tooltipText.text;
 
-        HideTooltip();
-        HideScrollMenu();
-        HideCaptureBar();
-        IntializeCounters();
+        
     }
 
     private void Start ()
     {
-        potionKeyText.text = InputHandler.current.potionUseKey.ToString();
+        HideTooltip();
+        HideScrollMenu();
+        HideCaptureBar();
+        IntializeCounters();
+
+        potionKeyText.text = "[" + InputHandler.current.potionUseKey.ToString() + "]";
     }
 
     public void UpdateCaptureBar (float value)
@@ -104,6 +110,10 @@ public class UIController : MonoBehaviour
     {
         returnText.gameObject.SetActive(true);
     }
+    public void HideReturnText ()
+    {
+        returnText.gameObject.SetActive(false);
+    }
 
     public void UpdateCoinCount (int value)
     {
@@ -138,7 +148,8 @@ public class UIController : MonoBehaviour
 
     private void DrawScroll (int index, List<ScrollPickup> _scrolls)
     {
-        Debug.Log(_scrollMenuItems[index].gameObject.name);
+        //Debug.Log(_scrollMenuItems[index - 1].gameObject.name);
+        //Debug.Log(_scrolls[index - 1].scroll.scrollSprite);
         _scrollMenuItems[index - 1].GetComponent<Image>().sprite = _scrolls[index - 1].scroll.scrollSprite;
         _scrollMenuItems[index - 1].SetActive(true);
     }
@@ -157,6 +168,11 @@ public class UIController : MonoBehaviour
     public void FadeInScreen (float time)
     {
         StartCoroutine(CanvasFade(time, 1f, 0f));
+    }
+
+    public void PlayMenuSound ()
+    {
+        audioManager.PlaySound("Wardrobe");
     }
 
     [ContextMenu("Autofill Scrolls")]

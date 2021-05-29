@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6818876212370495086}
   - component: {fileID: 6818876212370495087}
   - component: {fileID: 6818876212370495085}
+  - component: {fileID: 2165401786144595090}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -75,8 +76,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 6ed8564ceb1590d4c982a179bb395c06, type: 3}
+  m_SortingOrder: 4
+  m_Sprite: {fileID: -8985680732576350864, guid: 9df5759fa31ce39418c267bdd2c6a5e9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -163,22 +164,22 @@ MonoBehaviour:
   potionTimeout: 0
   noContacts: 0
   contactFilter:
-    useTriggers: 0
-    useLayerMask: 0
+    useTriggers: 1
+    useLayerMask: 1
     useDepth: 0
     useOutsideDepth: 0
     useNormalAngle: 0
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 0
+      m_Bits: 256
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
   enemyMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 256
   invisibleColor: {r: 0.525, g: 0.525, b: 1, a: 0.09803922}
 --- !u!114 &6818876212370495085
 MonoBehaviour:
@@ -192,3 +193,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 917e65db7e8647c4b972695dd9a881f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textTimeoutTime: 3
+  textTimeout: 0
+--- !u!95 &2165401786144595090
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6818876212370495080}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: dbc34c49a8c04014d891231d5ae376f2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

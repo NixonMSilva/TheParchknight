@@ -22,7 +22,6 @@ public class InputHandler : MonoBehaviour
     private void Awake ()
     {
         current = this;
-
         playerController = GameObject.Find("Player").GetComponent<PlayerController>();
     }
 

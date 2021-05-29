@@ -10,6 +10,9 @@ public class CollectibleController : MonoBehaviour
 
     private UIController UI_Controller;
 
+    private Victory victory;
+    private bool hasShownVictory = false;
+
     [SerializeField] private List<CollectiblePickup> _coinList;
     [SerializeField] private List<ScrollPickup> _scrollList;
 
@@ -41,10 +44,22 @@ public class CollectibleController : MonoBehaviour
         {
             _scrollObtained.Add(false);
         }
+
+        victory = GetComponent<Victory>();
+    }
+
+    private void Update ()
+    {
+        if (scrollCount >= GetMaxScrolls() && !hasShownVictory)
+        {
+            victory.DrawVictory();
+            hasShownVictory = true;
+        }
     }
 
     private void HandleScrollPickup (CollectiblePickup obj)
     {
+        audioManager.PlaySound("ScrollPickup");
         int scrollId = obj.GetComponent<ScrollPickup>().scroll.scrollId;
         _scrollObtained[scrollId] = true;
         UI_Controller.UpdateScrollCount(++scrollCount);
@@ -52,9 +67,7 @@ public class CollectibleController : MonoBehaviour
 
     private void HandleCoinPickup (CollectiblePickup obj)
     {
-        Debug.Log("Teste Aqui Antes");
         audioManager.PlaySound("CoinPickup");
-        Debug.Log("Teste Aqui Depois");
         ChangeCoinCount(1);
     }
 
@@ -67,6 +80,11 @@ public class CollectibleController : MonoBehaviour
     public void DrawScrollMenu ()
     {
         UI_Controller.DrawScrollMenu(_scrollObtained, _scrollList);
+    }
+
+    public int GetMaxScrolls ()
+    {
+        return _scrollList.Count;
     }
 
     [ContextMenu ("Autofill Collectibles")]
